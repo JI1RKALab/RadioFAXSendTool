@@ -36,7 +36,7 @@ namespace net.sictransit.wefax
                           // 信号生成
                           faxMachine.Fax(FileImage, WaveFileName, new BinaryCodedHeader(o.SatelliteName, o.SectorName, o.Date, o.Time, o.SectorName, o.Open));
 
-                          // 店舗られファイル消す
+                          // テンポラリファイル消す
                           File.Delete(FileImage);
                       }
                   });
