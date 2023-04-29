@@ -16,22 +16,29 @@ namespace net.sictransit.wefax
             Parser.Default.ParseArguments<Options>(args)
                   .WithParsed(o =>
                   {
+                      // 判定
                       if (!File.Exists(o.SourceImage))
                       {
+                          // 判定
                           throw new FileNotFoundException(o.SourceImage);
                       }
+                      else
+                      {
+                          // ここで画信号を操作する
+                          string FileImage = new ImageMake().MakeImage(o.SourceImage);
 
-                      // Todo:ここで画信号を操作する
-                      string FileImage = new ImageMake().MakeImage(o.SourceImage);
+                          // 画信号ファイルを生成
+                          string WaveFileName = Path.Combine(Path.GetDirectoryName(o.SourceImage), $"{Path.GetFileNameWithoutExtension(o.SourceImage)}.wav");
 
-                      string wavFilename = Path.Combine(Path.GetDirectoryName(o.SourceImage), $"{Path.GetFileNameWithoutExtension(o.SourceImage)}.wav");
+                          // イニシャライズ
+                          FaxMachine faxMachine = new(16000, 1900, 400, 576);
 
-                      FaxMachine faxMachine = new(16000, 1900, 400, 576);
+                          // 信号生成
+                          faxMachine.Fax(FileImage, WaveFileName, new BinaryCodedHeader(o.SatelliteName, o.SectorName, o.Date, o.Time, o.SectorName, o.Open));
 
-                      faxMachine.Fax(FileImage, wavFilename, new BinaryCodedHeader(o.SatelliteName, o.SectorName, o.Date, o.Time, o.SectorName, o.Open));
-
-                      //ファイル消す
-                      File.Delete(FileImage);
+                          // 店舗られファイル消す
+                          File.Delete(FileImage);
+                      }
                   });
         }
 
