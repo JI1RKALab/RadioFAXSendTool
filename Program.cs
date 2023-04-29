@@ -22,13 +22,16 @@ namespace net.sictransit.wefax
                       }
 
                       // Todo:ここで画信号を操作する
-                      var gggg = new ImageMake().MakeImage(o.SourceImage);
+                      string FileImage = new ImageMake().MakeImage(o.SourceImage);
 
-                      var wavFilename = Path.Combine(Path.GetDirectoryName(o.SourceImage), $"{Path.GetFileNameWithoutExtension(o.SourceImage)}.wav");
+                      string wavFilename = Path.Combine(Path.GetDirectoryName(o.SourceImage), $"{Path.GetFileNameWithoutExtension(o.SourceImage)}.wav");
 
-                      var faxMachine = new FaxMachine(16000);
+                      FaxMachine faxMachine = new(16000);
 
-                      faxMachine.Fax(gggg, wavFilename, new BinaryCodedHeader(o.SatelliteName, o.SectorName, o.Date, o.Time, o.SectorName, o.Open));
+                      faxMachine.Fax(FileImage, wavFilename, new BinaryCodedHeader(o.SatelliteName, o.SectorName, o.Date, o.Time, o.SectorName, o.Open));
+
+                      //ファイル消す
+                      File.Delete(FileImage);
                   });
         }
 
