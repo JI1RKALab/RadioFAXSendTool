@@ -30,7 +30,7 @@ namespace net.sictransit.wefax
         {
             var modulation = Enumerable.Range(0, imageWidth).Select(_ => -1f).ToArray();
 
-            return Enumerable.Range(0, 20 * 2).Select(_ => GenerateLine(modulation)).SelectMany(x => x).ToArray();
+            return Enumerable.Range(0, 20 * 2).Select(_ => GenerateLineForStartAndStop(modulation)).SelectMany(x => x).ToArray();
         }
 
         public float[] GenerateStart()
@@ -71,10 +71,10 @@ namespace net.sictransit.wefax
 
             var padding = new float[imageWidth - bin.Length];
 
-            return Enumerable.Range(0, bitLength).Select(_ => GenerateLine(bin.Concat(padding).ToArray())).SelectMany(x => x).ToArray();
+            return Enumerable.Range(0, bitLength).Select(_ => GenerateLineForStartAndStop(bin.Concat(padding).ToArray())).SelectMany(x => x).ToArray();
         }
 
-        public float[] GenerateLine(float[] pixels = null, bool bar = true)
+        public float[] GenerateLineForStartAndStop(float[] pixels = null, bool bar = true)
         {
             if (pixels == null)
             {
@@ -101,11 +101,38 @@ namespace net.sictransit.wefax
             return line;
         }
 
+        public float[] GenerateLineForImage(float[] pixels = null, bool bar = true)
+        {
+            if (pixels == null)
+            {
+                pixels = Array.Empty<float>();
+            }
+
+            var modulation = pixels;
+
+            var interpolationFactor = (double)modulation.Length / lineLength;
+
+            var line = new float[lineLength];
+
+            for (int i = 0; i < lineLength; i++)
+            {
+                var pixel = (int)(i * interpolationFactor);
+
+                var frequency = carrier + deviation * modulation[pixel];
+
+                time += dt * frequency;
+
+                line[i] = (float)Math.Sin(time);
+            }
+
+            return line;
+        }
+
         private float[] GenerateSquareWave(int frequency, int duration)
         {
             var modulation = Enumerable.Range(0, frequency).Select(x => x % 2 == 0 ? -1f : 1f).ToArray();
 
-            return Enumerable.Range(0, duration * 2).Select(_ => GenerateLine(modulation, false)).SelectMany(x => x).ToArray();
+            return Enumerable.Range(0, duration * 2).Select(_ => GenerateLineForStartAndStop(modulation, false)).SelectMany(x => x).ToArray();
         }
     }
 }

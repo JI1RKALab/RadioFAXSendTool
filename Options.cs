@@ -4,7 +4,7 @@ namespace net.sictransit.wefax
 {
     internal class Options
     {
-        [Option(Required = false, Default = "img/EIA_Resolution_Chart_1956.png", HelpText = "source image file to fax")]
+        [Option(Required = false, Default = "img/メモ帳.png", HelpText = "source image file to fax")]
         public string SourceImage { get; set; }
 
         [Option(Required = false, HelpText = "[BCH] satellite name (8 chars, e.g. \"NOAA-11\")")]

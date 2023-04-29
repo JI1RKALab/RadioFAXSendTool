@@ -18,7 +18,7 @@ namespace net.sictransit.wefax
         private readonly int resolution;
         private readonly float[] whiteBar;
 
-        public FaxMachine(int sampleRate = 8000, int carrier = 1600, int deviation = 400, int ioc = 576)
+        public FaxMachine(int sampleRate = 44100, int carrier = 1900, int deviation = 400, int ioc = 576)
         {
             this.sampleRate = sampleRate;
             this.carrier = carrier;
@@ -69,7 +69,7 @@ namespace net.sictransit.wefax
             {
                 var pixels = Enumerable.Range(0, image.Width).Select(x => image[x, y].GetBrightness() * 2f - 1).ToArray();
 
-                var samples = toneGenerator.GenerateLine(pixels);
+                var samples = toneGenerator.GenerateLineForImage(pixels);
 
                 writer.WriteSamples(samples, 0, samples.Length);
             }

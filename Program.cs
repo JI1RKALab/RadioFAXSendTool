@@ -21,6 +21,8 @@ namespace net.sictransit.wefax
                           throw new FileNotFoundException(o.SourceImage);
                       }
 
+                      // Todo:ここで画信号を操作する
+
                       var wavFilename = Path.Combine(Path.GetDirectoryName(o.SourceImage), $"{Path.GetFileNameWithoutExtension(o.SourceImage)}.wav");
 
                       var faxMachine = new FaxMachine(16000);
