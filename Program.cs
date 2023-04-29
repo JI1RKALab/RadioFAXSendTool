@@ -26,7 +26,7 @@ namespace net.sictransit.wefax
 
                       string wavFilename = Path.Combine(Path.GetDirectoryName(o.SourceImage), $"{Path.GetFileNameWithoutExtension(o.SourceImage)}.wav");
 
-                      FaxMachine faxMachine = new(16000);
+                      FaxMachine faxMachine = new(16000, 1900, 400, 576);
 
                       faxMachine.Fax(FileImage, wavFilename, new BinaryCodedHeader(o.SatelliteName, o.SectorName, o.Date, o.Time, o.SectorName, o.Open));
 
