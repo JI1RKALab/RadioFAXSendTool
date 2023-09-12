@@ -18,7 +18,7 @@ namespace net.sictransit.wefax
         private readonly int rpmSetting;
         private readonly bool isOver120;
 
-        public ToneGenerator(int imageWidth, float[] whiteBar, int sampleRate, int carrier, int deviation, int rpm = 120)
+        public ToneGenerator(int imageWidth, float[] whiteBar, int sampleRate, int carrier, int deviation, int rpm)
         {
             this.imageWidth = imageWidth;
             this.whiteBar = whiteBar;

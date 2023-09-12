@@ -28,7 +28,7 @@ namespace net.sictransit.wefax
             whiteBar = Enumerable.Repeat(1f, resolution / 20).ToArray();
         }
 
-        public void Fax(string imageFilename, string audioFilename, BinaryCodedHeader bch)
+        public void Fax(string imageFilename, string audioFilename, int rpm, BinaryCodedHeader bch)
         {
             Log.Information($"image input: {imageFilename}");
 
@@ -48,7 +48,7 @@ namespace net.sictransit.wefax
 
             Log.Information($"audio output: {audioFilename}");
 
-            var toneGenerator = new ToneGenerator(imageWidth, whiteBar, sampleRate, carrier, deviation);
+            var toneGenerator = new ToneGenerator(imageWidth, whiteBar, sampleRate, carrier, deviation, rpm);
 
             var start = toneGenerator.GenerateStart(false);
 
