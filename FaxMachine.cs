@@ -78,7 +78,5 @@ namespace net.sictransit.wefax
 
             writer.WriteSamples(stop, 0, stop.Length);
         }
-
-
     }
 }
