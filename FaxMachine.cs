@@ -50,7 +50,7 @@ namespace net.sictransit.wefax
 
             var toneGenerator = new ToneGenerator(imageWidth, whiteBar, sampleRate, carrier, deviation);
 
-            var start = toneGenerator.GenerateStart();
+            var start = toneGenerator.GenerateStart(false);
 
             writer.WriteSamples(start, 0, start.Length);
 

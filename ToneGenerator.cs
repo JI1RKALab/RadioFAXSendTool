@@ -15,14 +15,45 @@ namespace net.sictransit.wefax
         private readonly double dt;
         private double time = 0;
 
-        public ToneGenerator(int imageWidth, float[] whiteBar, int sampleRate, int carrier, int deviation)
+        private readonly int rpmSetting;
+        private readonly bool isOver120;
+
+        public ToneGenerator(int imageWidth, float[] whiteBar, int sampleRate, int carrier, int deviation, int rpm = 120)
         {
             this.imageWidth = imageWidth;
             this.whiteBar = whiteBar;
             this.carrier = carrier;
             this.deviation = deviation;
 
-            lineLength = sampleRate / 2;
+            switch (rpm)
+            {
+                case 60:
+                case 240:
+                    rpmSetting = 2;
+                    break;
+
+                case 120:
+                    rpmSetting = 1;
+                    break;
+
+                case 360:
+                    rpmSetting = 3;
+                    break;
+            }
+
+            int baseSampleRate = sampleRate / 2;
+
+            if (120 > rpm)
+            {
+                lineLength = baseSampleRate * rpmSetting;
+                isOver120 = false;
+            }
+            else
+            {
+                lineLength = baseSampleRate / rpmSetting;
+                isOver120 = true;
+            }
+
             dt = Math.PI * 2 / sampleRate;
         }
 
@@ -30,17 +61,49 @@ namespace net.sictransit.wefax
         {
             var modulation = Enumerable.Range(0, imageWidth).Select(_ => -1f).ToArray();
 
-            return Enumerable.Range(0, 20 * 2).Select(_ => GenerateLineForStartAndStop(modulation)).SelectMany(x => x).ToArray();
+            return Enumerable.Range(0, 30).Select(_ => GenerateLineForStartAndStop(modulation)).SelectMany(x => x).ToArray();
         }
 
-        public float[] GenerateStart()
+        public float[] GenerateStart(bool is288Flag)
         {
-            return GenerateSquareWave(300, 5);
+            int baseStartSignal = (is288Flag ? 675 : 300);
+            int startSignalValue = 0;
+
+            int startSignalLength = 7;
+
+            if (isOver120)
+            {
+                startSignalValue = baseStartSignal / rpmSetting;
+                startSignalLength *= rpmSetting;
+            }
+            else
+            {
+                startSignalValue = baseStartSignal * rpmSetting;
+                startSignalLength /= rpmSetting;
+            }
+
+            return GenerateSquareWave(startSignalValue, startSignalLength);
         }
 
         public float[] GenerateStop()
         {
-            return GenerateSquareWave(450, 5);
+            int baseEndSignal = 450;
+            int endSignalValue = 0;
+
+            int endSignalLength = 7;
+
+            if (isOver120)
+            {
+                endSignalValue = baseEndSignal / rpmSetting;
+                endSignalLength *= rpmSetting;
+            }
+            else
+            {
+                endSignalValue = baseEndSignal * rpmSetting;
+                endSignalLength /= rpmSetting;
+            }
+
+            return GenerateSquareWave(endSignalValue, endSignalLength);
         }
 
         public float[] GenerateBCH(BinaryCodedHeader bch, bool debug = false)
