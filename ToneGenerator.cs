@@ -164,7 +164,7 @@ namespace net.sictransit.wefax
             return line;
         }
 
-        public float[] GenerateLineForImage(float[] pixels = null, bool bar = true)
+        public float[] GenerateLineForImage(float[] pixels = null)
         {
             if (pixels == null)
             {
